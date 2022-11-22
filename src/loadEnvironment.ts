@@ -16,7 +16,7 @@ interface EnvironmentStructure {
 const environment: EnvironmentStructure = {
   port: +port || 4000,
   mongoDatabaseUrl,
-  corsAllowedOrigins: corsAllowedOrigins.split(","),
+  corsAllowedOrigins: corsAllowedOrigins?.split(","),
 };
 
 export default environment;
