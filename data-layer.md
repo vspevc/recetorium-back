@@ -5,7 +5,6 @@
 - username: required, unique, string min 3 max 30 chars
 - password: required, unique, string min 8 max 30 chars
 - email: required, unique, string, valid email format
-- myRecipes - array ObjectId-Recipe
 - favoriteRecipes: array ObjectId-Recipe
 - scheduledRecipes: array { recipeId: ObjectId-Recipe | ScheduledDate: number }
 - createdAt: number - default: timestamp
