@@ -1,9 +1,10 @@
 import CustomError from "./CustomError";
+import type CustomErrorStructure from "./types";
 
 describe("Given CustomError class", () => {
   describe("When it's instantiated with message 'Server error', public message 'Internal server error' and statusCode 500", () => {
     test("Then it should return an object istance of Error with those properties and values", () => {
-      const expecterError = {
+      const expecterError: CustomErrorStructure = {
         message: "Server error",
         publicMessage: "Internal server error",
         statusCode: 500,
