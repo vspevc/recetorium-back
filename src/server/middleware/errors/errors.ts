@@ -1,10 +1,19 @@
 import "../../../loadEnvironment.js";
-import type { ErrorRequestHandler } from "express";
+import type { ErrorRequestHandler, RequestHandler } from "express";
 import debugCreator from "debug";
 import chalk from "chalk";
-import type CustomError from "../../../CustomError/CustomError.js";
+import CustomError from "../../../CustomError/CustomError.js";
+import serverCustomErrors from "../../../CustomError/serverErrorMessages.js";
 
 const debug = debugCreator("recetorium:server:error");
+
+export const notFoundError: RequestHandler = (req, res, next) => {
+  const { message, publicMessage, statusCode } =
+    serverCustomErrors.notFoundError(req.path);
+
+  const error = new CustomError(message, publicMessage, statusCode);
+  next(error);
+};
 
 export const errorHandler: ErrorRequestHandler = (
   error: CustomError,
