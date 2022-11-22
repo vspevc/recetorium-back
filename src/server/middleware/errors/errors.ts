@@ -6,10 +6,10 @@ import CustomError from "../../../CustomError/CustomError.js";
 import serverCustomErrors from "../../../CustomError/serverErrorMessages.js";
 
 const debug = debugCreator("recetorium:server:error");
+const { notFoundErrorMessage, unknownServerErrorMessage } = serverCustomErrors;
 
 export const notFoundError: RequestHandler = (req, res, next) => {
-  const { message, publicMessage, statusCode } =
-    serverCustomErrors.notFoundError(req.path);
+  const { message, publicMessage, statusCode } = notFoundErrorMessage(req.path);
 
   const error = new CustomError(message, publicMessage, statusCode);
   next(error);
@@ -23,7 +23,7 @@ export const errorHandler: ErrorRequestHandler = (
   next
 ) => {
   const errorCode = error.statusCode ?? 500;
-  const publicMessage = error.publicMessage || "Internal server error";
+  const publicMessage = error.publicMessage || unknownServerErrorMessage;
 
   debug(chalk.red.bold(error.message));
 
