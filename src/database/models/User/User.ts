@@ -17,12 +17,6 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
-  myRecipes: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "Recipe",
-    },
-  ],
   favoriteRecipes: [
     {
       type: Schema.Types.ObjectId,
