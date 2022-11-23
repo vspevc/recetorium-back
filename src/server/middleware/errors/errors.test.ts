@@ -1,9 +1,13 @@
 import type { Request, Response } from "express";
 import { MongoServerError } from "mongodb";
+import { ValidationError } from "express-validation";
+import type { ValidationError as JoiError } from "joi";
 import CustomError from "../../../CustomError/CustomError";
 import serverCustomErrors from "../../../CustomError/serverErrorMessages";
 import type CustomErrorStructure from "../../../CustomError/types";
 import { errorHandler, notFoundError } from "./errors";
+
+afterEach(() => jest.clearAllMocks());
 
 const { notFoundErrorMessage, unknownServerErrorMessage } = serverCustomErrors;
 
@@ -42,7 +46,7 @@ describe("Given a errorHandler middleware", () => {
     });
   });
 
-  describe("When it receives a MongoServerError with code 11000", () => {
+  describe("When it receives an error instance of MongoServerError with code 11000", () => {
     test("Then it should send a respones with status 400 and error: 'User already exists.'", () => {
       const error = new MongoServerError({ message: "MongoServerError" });
       error.code = 11000;
@@ -53,6 +57,32 @@ describe("Given a errorHandler middleware", () => {
 
       expect(res.status).toHaveBeenCalledWith(expectedStatusCode);
       expect(res.json).toHaveBeenCalledWith(expectedJson);
+    });
+  });
+
+  describe("When it receives an error instance of ValidationError", () => {
+    test("Then it should send a response with status code 400 and error: 'Joi validation error'", () => {
+      const error = new ValidationError({}, {});
+      const errorMessage: JoiError = {
+        name: "ValidationError",
+        isJoi: true,
+        details: [
+          {
+            message: "Joi validation error",
+            path: [],
+            type: "string",
+          },
+        ],
+        message: "Joi validation error",
+        annotate: () => "string",
+        _original: "any",
+      };
+      error.details.body = [errorMessage];
+      const expectedStatusCode = 400;
+
+      errorHandler(error, null, res as Response, null);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatusCode);
     });
   });
 });
