@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { MongoServerError } from "mongodb";
 import CustomError from "../../../CustomError/CustomError";
 import serverCustomErrors from "../../../CustomError/serverErrorMessages";
 import type CustomErrorStructure from "../../../CustomError/types";
@@ -33,6 +34,20 @@ describe("Given a errorHandler middleware", () => {
       const error = { message: "Server error" };
       const expectedStatusCode = 500;
       const expectedJson = { error: unknownServerErrorMessage };
+
+      errorHandler(error, null, res as Response, null);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatusCode);
+      expect(res.json).toHaveBeenCalledWith(expectedJson);
+    });
+  });
+
+  describe("When it receives a MongoServerError with code 11000", () => {
+    test("Then it should send a respones with status 400 and error: 'User already exists.'", () => {
+      const error = new MongoServerError({ message: "MongoServerError" });
+      error.code = 11000;
+      const expectedStatusCode = 400;
+      const expectedJson = { error: "User already exists." };
 
       errorHandler(error, null, res as Response, null);
 

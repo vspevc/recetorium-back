@@ -2,6 +2,7 @@ import "../../../loadEnvironment.js";
 import type { ErrorRequestHandler, RequestHandler } from "express";
 import debugCreator from "debug";
 import chalk from "chalk";
+import { MongoServerError } from "mongodb";
 import CustomError from "../../../CustomError/CustomError.js";
 import serverCustomErrors from "../../../CustomError/serverErrorMessages.js";
 
@@ -22,10 +23,15 @@ export const errorHandler: ErrorRequestHandler = (
   // eslint-disable-next-line no-unused-vars
   next
 ) => {
-  const errorCode = error.statusCode ?? 500;
-  const publicMessage = error.publicMessage || unknownServerErrorMessage;
+  let statusCode = error.statusCode ?? 500;
+  let publicMessage = error.publicMessage || unknownServerErrorMessage;
+
+  if (error instanceof MongoServerError && error.code === 11000) {
+    publicMessage = "User already exists.";
+    statusCode = 400;
+  }
 
   debug(chalk.red.bold(error.message));
 
-  res.status(errorCode).json({ error: publicMessage });
+  res.status(statusCode).json({ error: publicMessage });
 };
