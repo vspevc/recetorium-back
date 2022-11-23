@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import User from "../../../database/models/User/User";
-import { bobUser } from "../../../Factory/userFactory/userFactory";
+import { bobUser } from "../../../factories/userFactory/userFactory";
 import { registerUser } from "./usersControllers";
 
 describe("Given a registerUser controller", () => {
@@ -18,7 +18,7 @@ describe("Given a registerUser controller", () => {
   };
   const next: NextFunction = jest.fn();
 
-  describe("When it receives username 'Bob', password 'silent' and email 'bob@this.com'", () => {
+  describe("When it receives username 'Bob', a valid password and email 'bob@this.com'", () => {
     test("Then it should call it's methods status with 201 and json with 'User Bob was registered successfully.'", async () => {
       User.create = jest.fn().mockReturnValue(bobUser);
       const expectedStatus = 201;

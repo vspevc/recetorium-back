@@ -13,6 +13,5 @@ const userFactory = Factory.define<UserStructure>(() => ({
 
 export const bobUser = userFactory.build({
   username: "Bob",
-  password: "silent",
   email: "bob@this.com",
 });
