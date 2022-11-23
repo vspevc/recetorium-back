@@ -2,6 +2,7 @@ import "../../../loadEnvironment.js";
 import type { ErrorRequestHandler, RequestHandler } from "express";
 import debugCreator from "debug";
 import chalk from "chalk";
+import { ValidationError } from "express-validation";
 import { MongoServerError } from "mongodb";
 import CustomError from "../../../CustomError/CustomError.js";
 import serverCustomErrors from "../../../CustomError/serverErrorMessages.js";
@@ -28,6 +29,16 @@ export const errorHandler: ErrorRequestHandler = (
 
   if (error instanceof MongoServerError && error.code === 11000) {
     publicMessage = "User already exists.";
+    statusCode = 400;
+  }
+
+  if (error instanceof ValidationError) {
+    const errorMessages = error.details.body.map(
+      (errorDetail) => errorDetail.message
+    );
+
+    error.message = errorMessages.join("\n");
+    publicMessage = errorMessages.join(", ");
     statusCode = 400;
   }
 
