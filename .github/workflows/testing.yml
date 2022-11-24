@@ -16,3 +16,5 @@ jobs:
 
       - name: Testing
         run: npm test
+        env:
+          CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
