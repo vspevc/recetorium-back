@@ -17,6 +17,8 @@ jobs:
         run: npm ci
       - name: Check coverage
         run: npm run test:coverage
+        env:
+          CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:

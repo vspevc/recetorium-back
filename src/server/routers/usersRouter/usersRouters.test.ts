@@ -33,6 +33,22 @@ describe("Given a request GET /", () => {
       expect(response.body).toStrictEqual(expectedResponseBody);
     });
   });
+
+  describe("When it receives a request from a non whitelisted origin", () => {
+    test("Then it should send a response with status code 400 and error: 'Cross-Origin Request Blocked'", async () => {
+      const expectedStatusCode = 400;
+      const expectedResponseBody = {
+        error: "Cross-Origin Request Blocked",
+      };
+
+      const response = await request(app)
+        .post("/")
+        .set({ origin: "http://localhost:500" })
+        .expect(expectedStatusCode);
+
+      expect(response.body).toStrictEqual(expectedResponseBody);
+    });
+  });
 });
 
 describe("Given a request to a non existing endpoint", () => {
