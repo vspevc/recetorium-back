@@ -19,12 +19,12 @@ export const getPagination = ({
 
   let previousPage: string = null;
   if (currentPage > paginationDefaults.firstPage) {
-    previousPage = `${path}?page=${currentPage - 1}${extraData}`;
+    previousPage = `${path}?page=${+currentPage - 1}${extraData}`;
   }
 
   let nextPage: string = null;
   if (perPage * currentPage < totalItems) {
-    nextPage = `${path}?page=${currentPage + 1}${extraData}`;
+    nextPage = `${path}?page=${+currentPage + 1}${extraData}`;
   }
 
   return [previousPage, nextPage];

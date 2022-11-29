@@ -1,5 +1,12 @@
 import { model, Schema } from "mongoose";
 
+const typeSchema = new Schema({
+  name: {
+    type: String,
+    enum: ["desayuno", "almuerzo", "comida", "cena", "postre"],
+    required: true,
+  },
+});
 const ingredientsSchema = new Schema({
   name: {
     type: String,
@@ -35,9 +42,8 @@ const recipeSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  type: {
-    type: String,
-    enum: ["desayuno", "almuerzo", "comida", "cena", "postre"],
+  types: {
+    type: [typeSchema],
     required: true,
   },
   ingredients: {
