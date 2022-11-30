@@ -33,9 +33,19 @@ export const errorHandler: ErrorRequestHandler = (
   }
 
   if (error instanceof ValidationError) {
-    const errorMessages = error.details.body.map(
-      (errorDetail) => errorDetail.message
-    );
+    const errorMessages: string[] = [];
+
+    if (error.details.body) {
+      errorMessages.push(
+        ...error.details.body.map((errorDetail) => errorDetail.message)
+      );
+    }
+
+    if (error.details.query) {
+      errorMessages.push(
+        ...error.details.query.map((errorDetail) => errorDetail.message)
+      );
+    }
 
     error.message = errorMessages.join("\n");
     publicMessage = errorMessages.join(", ");
