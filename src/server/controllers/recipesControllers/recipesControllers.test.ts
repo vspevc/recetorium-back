@@ -27,7 +27,8 @@ describe("Given a searchRecipes controller", () => {
   > = {
     body: {},
     query: {},
-    path: "/recipes/search",
+    baseUrl: "/recipes",
+    path: "/search",
   };
   const res: Partial<Response> = {
     status: jest.fn().mockReturnThis(),
@@ -52,13 +53,13 @@ describe("Given a searchRecipes controller", () => {
           exec: jest.fn().mockReturnValue(mockRecipes.length),
         }),
       });
-      const previuosPage = null as string;
-      const nextPage = `${req.path}?page=2`;
+      const previousPage = null as string;
+      const nextPage = `${req.baseUrl}${req.path}?page=2`;
       const totalPages = Math.ceil(
         mockRecipes.length / paginationDefaults.perPage
       );
       const expectedJsonResponse = {
-        previuosPage,
+        previousPage,
         nextPage,
         totalPages,
         recipes: randomRecipes,
@@ -95,13 +96,13 @@ describe("Given a searchRecipes controller", () => {
           exec: jest.fn().mockReturnValue(expectedRecipe.length),
         }),
       });
-      const previuosPage = null as string;
+      const previousPage = null as string;
       const nextPage = null as string;
       const totalPages = Math.ceil(
         expectedRecipe.length / paginationDefaults.perPage
       );
       const expectedJsonResponse = {
-        previuosPage,
+        previousPage,
         nextPage,
         totalPages,
         recipes: expectedRecipe,
