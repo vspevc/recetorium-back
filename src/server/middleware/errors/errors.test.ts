@@ -60,7 +60,7 @@ describe("Given a errorHandler middleware", () => {
     });
   });
 
-  describe("When it receives an error instance of ValidationError", () => {
+  describe("When it receives an error instance of ValidationError at body and query", () => {
     test("Then it should send a response with status code 400 and error: 'Joi validation error'", () => {
       const error = new ValidationError({}, {});
       const errorMessage: JoiError = {
@@ -78,6 +78,7 @@ describe("Given a errorHandler middleware", () => {
         _original: "any",
       };
       error.details.body = [errorMessage];
+      error.details.query = [errorMessage];
       const expectedStatusCode = 400;
 
       errorHandler(error, null, res as Response, null);

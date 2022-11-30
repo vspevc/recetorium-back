@@ -45,8 +45,8 @@ export const searchRecipes = async (
       .exec();
     const count = await Recipe.find(filter).count().exec();
 
-    const [previuosPage, nextPage] = getPagination({
-      path: req.path,
+    const [previousPage, nextPage] = getPagination({
+      path: `${req.baseUrl}${req.path}`,
       totalItems: count,
       currentPage,
       perPage,
@@ -54,7 +54,7 @@ export const searchRecipes = async (
 
     const totalPages = Math.ceil(count / perPage);
 
-    res.status(200).json({ previuosPage, nextPage, totalPages, recipes });
+    res.status(200).json({ previousPage, nextPage, totalPages, recipes });
   } catch (error: unknown) {
     next(error as Error);
   }
