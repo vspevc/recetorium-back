@@ -12,6 +12,20 @@ interface Step {
   order: number;
 }
 
+export interface RecipeMainData {
+  name: string;
+  author: string;
+  types: Type[];
+  ingredients: Ingredient[];
+  steps: Step[];
+  elaborationTime: string;
+}
+export interface RecipeStructure extends RecipeMainData {
+  urlSlug: string;
+  image: string;
+  backupImage: string;
+}
+
 export interface SearchRecipeBody {
   name?: string;
   types?: Type[];
@@ -27,14 +41,4 @@ export interface SearchRecipeFilter {
   types?: unknown;
 }
 
-export interface RecipeStructure {
-  name: string;
-  urlSlug: string;
-  author: string;
-  types: Type[];
-  ingredients: Ingredient[];
-  steps: Step[];
-  elaborationTime: string;
-  image: string;
-  backupImage: string;
-}
+export type CreateRecipeBody = RecipeMainData;

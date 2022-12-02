@@ -1,10 +1,16 @@
 import type { NextFunction, Request, Response } from "express";
+import fs from "fs/promises";
+import path from "path";
 import Recipe from "../../../database/models/Recipe/Recipe.js";
+import imagePath from "../../../utils/images/imagePath.js";
 import {
   getPagination,
   paginationDefaults,
 } from "../../../utils/pagination/getPagination.js";
+import slugify from "../../../utils/slug/slugify.js";
 import type {
+  CreateRecipeBody,
+  RecipeStructure,
   SearchRecipeBody,
   SearchRecipeFilter,
   SearchRecipeParams,
@@ -55,6 +61,57 @@ export const searchRecipes = async (
     const totalPages = Math.ceil(count / perPage);
 
     res.status(200).json({ previousPage, nextPage, totalPages, recipes });
+  } catch (error: unknown) {
+    next(error as Error);
+  }
+};
+
+export const createRecipe = async (
+  req: Request<
+    Record<string, unknown>,
+    Record<string, unknown>,
+    CreateRecipeBody
+  >,
+  res: Response,
+  next: NextFunction
+) => {
+  const { name, author, types, ingredients, steps, elaborationTime } = req.body;
+
+  const timestamp = Date.now();
+  const urlSlug = `${timestamp}/${slugify(name)}`;
+
+  let recipeFileName = "default.webp";
+  const { file } = req;
+  if (file) {
+    const originalFileName = file.originalname;
+    recipeFileName = originalFileName.replace(/(\.\w+)$/i, `-${timestamp}$1`);
+
+    await fs.rename(
+      path.join(imagePath.base, imagePath.recipesFolder, file.filename),
+      path.join(imagePath.base, imagePath.recipesFolder, recipeFileName)
+    );
+  }
+
+  const backupImage = recipeFileName;
+
+  const recipe: RecipeStructure = {
+    name,
+    author,
+    types,
+    ingredients,
+    steps,
+    elaborationTime,
+    urlSlug,
+    image: recipeFileName,
+    backupImage,
+  };
+
+  try {
+    await Recipe.create(recipe);
+
+    res
+      .status(201)
+      .json({ message: `Recipe "${name}" was created successfully` });
   } catch (error: unknown) {
     next(error as Error);
   }
