@@ -1,16 +1,24 @@
 import type { NextFunction, Request, Response } from "express";
+import fs from "fs/promises";
 import Recipe from "../../../database/models/Recipe/Recipe";
 import {
   recipeList,
   recipeTomatoSoup,
 } from "../../../factories/recipeFactory/recipeFactory";
 import { paginationDefaults } from "../../../utils/pagination/getPagination";
-import { searchRecipes } from "./recipesControllers";
+import { createRecipe, searchRecipes } from "./recipesControllers";
 import type {
+  CreateRecipeBody,
   RecipeStructure,
   SearchRecipeBody,
   SearchRecipeParams,
 } from "./types";
+
+const res: Partial<Response> = {
+  status: jest.fn().mockReturnThis(),
+  json: jest.fn(),
+};
+const next: NextFunction = jest.fn();
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -30,11 +38,6 @@ describe("Given a searchRecipes controller", () => {
     baseUrl: "/recipes",
     path: "/search",
   };
-  const res: Partial<Response> = {
-    status: jest.fn().mockReturnThis(),
-    json: jest.fn(),
-  };
-  const next: NextFunction = jest.fn();
 
   describe("When it receives a request without body neither params", () => {
     test("Then it should call response methods status with 200 and json with recipes with 8 recipes", async () => {
@@ -82,7 +85,7 @@ describe("Given a searchRecipes controller", () => {
   });
 
   describe("When it receives body name 'Tomato soup' and types names 'comida' and 'cena'", () => {
-    test("Then it should call response methods status with 200 and json with recipes with only recipeTomatoSoup", async () => {
+    test("Then it should call response methods status with 200 and json with only recipeTomatoSoup", async () => {
       req.body.name = "comida";
       req.body.types = [{ name: "comida" }, { name: "cena" }];
       const expectedRecipe = [recipeTomatoSoup];
@@ -146,6 +149,71 @@ describe("Given a searchRecipes controller", () => {
         res as Response,
         next
       );
+
+      expect(next).toHaveBeenCalled();
+    });
+  });
+});
+
+describe("Given a createRecipe controller", () => {
+  const { name, author, types, ingredients, steps, elaborationTime } =
+    recipeTomatoSoup;
+  const req: Partial<
+    Request<Record<string, unknown>, Record<string, unknown>, CreateRecipeBody>
+  > = {
+    body: {
+      name,
+      author,
+      types,
+      ingredients,
+      steps,
+      elaborationTime,
+    },
+  };
+
+  describe("When it receives a request with valid recipe name 'Tomato soup' and image 'tomato-soup.jpg'", () => {
+    test("Then it should call response methods status with 201 and json with 'Recipe `Tomato soup` was created successfully'", async () => {
+      const file: Partial<Express.Multer.File> = {
+        filename: "hasedfilename",
+        originalname: "tomato-soup",
+      };
+      req.file = file as Express.Multer.File;
+      const expectedStatus = 201;
+      const expectedJson = {
+        message: 'Recipe "Tomato soup" was created successfully',
+      };
+      Recipe.create = jest.fn().mockReturnValue(recipeTomatoSoup);
+      fs.rename = jest.fn().mockReturnValue(undefined);
+
+      await createRecipe(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+      expect(res.json).toHaveBeenCalledWith(expectedJson);
+    });
+  });
+
+  describe("When it receives a request with valid recipe name 'Tomato soup' and without image", () => {
+    test("Then it should call response methods status with 201 and json with 'Recipe `Tomato soup` was created successfully'", async () => {
+      const expectedStatus = 201;
+      const expectedJson = {
+        message: 'Recipe "Tomato soup" was created successfully',
+      };
+      Recipe.create = jest.fn().mockReturnValue(recipeTomatoSoup);
+
+      await createRecipe(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+      expect(res.json).toHaveBeenCalledWith(expectedJson);
+    });
+  });
+
+  describe("When it receives a request with duplicated recipe name 'Tomato soup' and without image", () => {
+    test("Then it should call next with an error", async () => {
+      Recipe.create = jest.fn().mockImplementation(() => {
+        throw new Error("error");
+      });
+
+      await createRecipe(req as Request, res as Response, next);
 
       expect(next).toHaveBeenCalled();
     });
