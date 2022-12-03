@@ -1,8 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import fs from "fs/promises";
-import path from "path";
 import Recipe from "../../../database/models/Recipe/Recipe.js";
-import imagePath from "../../../utils/images/imagePath.js";
 import {
   getPagination,
   paginationDefaults,
@@ -80,19 +77,10 @@ export const createRecipe = async (
   const timestamp = Date.now();
   const urlSlug = `${timestamp}/${slugify(name)}`;
 
-  let recipeFileName = "default.webp";
   const { file } = req;
-  if (file) {
-    const originalFileName = file.originalname;
-    recipeFileName = originalFileName.replace(/(\.\w+)$/i, `-${timestamp}$1`);
+  const recipeImageName = file ? file.filename : "default.webp";
 
-    await fs.rename(
-      path.join(imagePath.base, imagePath.recipesFolder, file.filename),
-      path.join(imagePath.base, imagePath.recipesFolder, recipeFileName)
-    );
-  }
-
-  const backupImage = recipeFileName;
+  const backupImage = recipeImageName;
 
   const recipe: RecipeStructure = {
     name,
@@ -102,7 +90,7 @@ export const createRecipe = async (
     steps,
     elaborationTime,
     urlSlug,
-    image: recipeFileName,
+    image: recipeImageName,
     backupImage,
   };
 
