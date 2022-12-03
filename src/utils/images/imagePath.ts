@@ -1,5 +1,5 @@
 const imagePath = {
-  base: "asstes",
+  base: "assets",
   recipesFolder: "recipes/images",
 };
 
