@@ -2,5 +2,7 @@ node_modules
 build
 coverage
 
+assets
+
 .env
 .DS_Store

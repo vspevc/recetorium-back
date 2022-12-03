@@ -56,7 +56,7 @@ const recipeSchema = new Schema({
   },
   elaborationTime: {
     type: String,
-    maxLenght: 8,
+    maxLenght: 13,
     required: true,
   },
   image: {
