@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from "express";
-import fs from "fs/promises";
 import Recipe from "../../../database/models/Recipe/Recipe";
 import {
   recipeList,
@@ -183,7 +182,6 @@ describe("Given a createRecipe controller", () => {
         message: 'Recipe "Tomato soup" was created successfully',
       };
       Recipe.create = jest.fn().mockReturnValue(recipeTomatoSoup);
-      fs.rename = jest.fn().mockReturnValue(undefined);
 
       await createRecipe(req as Request, res as Response, next);
 
@@ -194,6 +192,7 @@ describe("Given a createRecipe controller", () => {
 
   describe("When it receives a request with valid recipe name 'Tomato soup' and without image", () => {
     test("Then it should call response methods status with 201 and json with 'Recipe `Tomato soup` was created successfully'", async () => {
+      req.file = null;
       const expectedStatus = 201;
       const expectedJson = {
         message: 'Recipe "Tomato soup" was created successfully',
