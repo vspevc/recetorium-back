@@ -8,7 +8,8 @@ import {
   createRecipe,
   searchRecipes,
 } from "../../controllers/recipesControllers/recipesControllers.js";
-import imageResize from "../../middleware/images/resize/imageResize.js";
+import imageBackup from "../../middleware/images/imageBackup/imageBackup.js";
+import imageResize from "../../middleware/images/imageResize/imageResize.js";
 import createRecipesValidation from "../../middleware/validation/createRecipesValidation.js";
 import searchRecipesValidation from "../../middleware/validation/searchRecipesValidation.js";
 
@@ -33,6 +34,7 @@ recipesRouter.post(
   upload.single("image"),
   validate(createRecipesValidation, {}, { abortEarly: false }),
   imageResize,
+  imageBackup,
   createRecipe
 );
 

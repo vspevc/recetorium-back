@@ -4,6 +4,7 @@ interface ServerCustomErrorsStructure {
   notFoundErrorMessage: (path: string) => CustomErrorStructure;
   unauthorizedCorsOrigin: (requestOrigin: string) => CustomErrorStructure;
   cannotProcesImage: (message: string) => CustomErrorStructure;
+  cannotUploadImage: (message: string) => CustomErrorStructure;
   unknownServerErrorMessage: string;
 }
 
@@ -21,6 +22,11 @@ const serverCustomErrors: ServerCustomErrorsStructure = {
   cannotProcesImage: (message) => ({
     message,
     publicMessage: "Cannot process image",
+    statusCode: 500,
+  }),
+  cannotUploadImage: (message) => ({
+    message,
+    publicMessage: "Cannot upload image",
     statusCode: 500,
   }),
   unknownServerErrorMessage: "Internal server error",

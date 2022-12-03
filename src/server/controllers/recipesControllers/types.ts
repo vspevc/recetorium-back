@@ -41,4 +41,6 @@ export interface SearchRecipeFilter {
   types?: unknown;
 }
 
-export type CreateRecipeBody = RecipeMainData;
+export interface CreateRecipeBody extends RecipeMainData {
+  backupImage?: string;
+}

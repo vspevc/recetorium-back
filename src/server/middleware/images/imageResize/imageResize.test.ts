@@ -68,7 +68,7 @@ describe("Given an imageResize middleware", () => {
 
       await imageResize(req as Request, null, next);
 
-      expect(next).toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith();
     });
   });
 });
