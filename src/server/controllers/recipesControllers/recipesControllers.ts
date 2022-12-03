@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
+import bucket from "../../../utils/supabaseConfig.js";
 import Recipe from "../../../database/models/Recipe/Recipe.js";
+import imagePath from "../../../utils/images/imagePath.js";
 import {
   getPagination,
   paginationDefaults,
@@ -72,15 +74,24 @@ export const createRecipe = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { name, author, types, ingredients, steps, elaborationTime } = req.body;
+  const {
+    name,
+    author,
+    types,
+    ingredients,
+    steps,
+    elaborationTime,
+    backupImage,
+  } = req.body;
 
   const timestamp = Date.now();
   const urlSlug = `${timestamp}/${slugify(name)}`;
 
   const { file } = req;
-  const recipeImageName = file ? file.filename : "default.webp";
+  const recipeImageName = file ? file.filename : imagePath.defaultImage;
 
-  const backupImage = recipeImageName;
+  const backupImageUrl =
+    backupImage || bucket.getPublicUrl(imagePath.defaultImage).data.publicUrl;
 
   const recipe: RecipeStructure = {
     name,
@@ -91,7 +102,7 @@ export const createRecipe = async (
     elaborationTime,
     urlSlug,
     image: recipeImageName,
-    backupImage,
+    backupImage: backupImageUrl,
   };
 
   try {

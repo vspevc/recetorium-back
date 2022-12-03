@@ -2,7 +2,8 @@ node_modules
 build
 coverage
 
-assets
+/assets/recipes/images/*
+!/assets/recipes/images/default.webp
 
 .env
 .DS_Store

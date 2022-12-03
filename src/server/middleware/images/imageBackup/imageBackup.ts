@@ -1,13 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
 import fs from "fs/promises";
 import path from "path";
-import sharp from "sharp";
 import CustomError from "../../../../CustomError/CustomError.js";
 import serverCustomErrors from "../../../../CustomError/serverErrorMessages.js";
 import imagePath from "../../../../utils/images/imagePath.js";
+import bucket from "../../../../utils/supabaseConfig.js";
 import type { CreateRecipeBody } from "../../../controllers/recipesControllers/types.js";
 
-const imageResize = async (
+const imageBackup = async (
   req: Request<
     Record<string, unknown>,
     Record<string, unknown>,
@@ -21,35 +21,30 @@ const imageResize = async (
     return;
   }
 
-  const { filename, originalname } = req.file;
-
-  const timestamp = Date.now();
-  const uniqueImageName = originalname.replace(/(\.\w+)$/i, `-${timestamp}`);
-  const newImageName = `${uniqueImageName}.webp`;
-
-  const filePath = path.join(imagePath.base, imagePath.recipesFolder);
+  const { filename } = req.file;
+  const image = path.join(imagePath.base, imagePath.recipesFolder, filename);
 
   try {
-    await sharp(path.join(filePath, filename))
-      .resize(370, 240, { fit: "cover" })
-      .webp({ quality: 90 })
-      .toFormat("webp")
-      .toFile(path.join(filePath, newImageName));
+    const imageBuffer = await fs.readFile(image);
 
-    await fs.rm(path.join(filePath, filename));
+    await bucket.upload(filename, imageBuffer);
 
-    req.file.filename = newImageName;
-    req.file.originalname = newImageName;
+    const {
+      data: { publicUrl },
+    } = bucket.getPublicUrl(filename);
+
+    req.body.backupImage = publicUrl;
 
     next();
   } catch (error: unknown) {
-    const { cannotProcesImage } = serverCustomErrors;
-    const { message, publicMessage, statusCode } = cannotProcesImage(
+    const { cannotUploadImage } = serverCustomErrors;
+    const { message, publicMessage, statusCode } = cannotUploadImage(
       (error as Error).message
     );
     const customError = new CustomError(message, publicMessage, statusCode);
+
     next(customError);
   }
 };
 
-export default imageResize;
+export default imageBackup;
