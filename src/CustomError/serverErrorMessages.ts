@@ -3,6 +3,7 @@ import type CustomErrorStructure from "./types";
 interface ServerCustomErrorsStructure {
   notFoundErrorMessage: (path: string) => CustomErrorStructure;
   unauthorizedCorsOrigin: (requestOrigin: string) => CustomErrorStructure;
+  cannotProcesImage: (message: string) => CustomErrorStructure;
   unknownServerErrorMessage: string;
 }
 
@@ -16,6 +17,11 @@ const serverCustomErrors: ServerCustomErrorsStructure = {
     message: `Unauthorized cors origin: ${requestOrigin}`,
     publicMessage: "Cross-Origin Request Blocked",
     statusCode: 400,
+  }),
+  cannotProcesImage: (message) => ({
+    message,
+    publicMessage: "Cannot process image",
+    statusCode: 500,
   }),
   unknownServerErrorMessage: "Internal server error",
 };
