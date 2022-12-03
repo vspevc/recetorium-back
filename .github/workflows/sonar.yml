@@ -19,6 +19,9 @@ jobs:
         run: npm run test:coverage
         env:
           CORS_ALLOWED_ORIGINS: ${{ secrets.CORS_ALLOWED_ORIGINS }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_RECIPE_IMAGES_BUCKET: ${{ secrets.SUPABASE_RECIPE_IMAGES_BUCKET }}
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
