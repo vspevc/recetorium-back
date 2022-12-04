@@ -19,7 +19,7 @@ const upload = multer({
   dest: path.join(imagePath.base, imagePath.recipesFolder),
   fileFilter: imageValidation,
   limits: {
-    fileSize: 2097152,
+    fileSize: 6291456,
   },
 });
 
