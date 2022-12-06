@@ -36,6 +36,8 @@ describe("Given a searchRecipes controller", () => {
     query: {},
     baseUrl: "/recipes",
     path: "/search",
+    protocol: "http",
+    get: jest.fn().mockReturnValue("loacalhost"),
   };
 
   describe("When it receives a request without body neither params", () => {
