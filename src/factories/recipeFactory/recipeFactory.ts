@@ -28,7 +28,7 @@ const recipeFactory = Factory.define<RecipeStructure>(() => ({
     { step: faker.lorem.paragraph(), order: 3 },
   ],
   elaborationTime: faker.word.interjection(),
-  image: faker.internet.url(),
+  image: faker.lorem.word(),
   backupImage: faker.internet.url(),
 }));
 
