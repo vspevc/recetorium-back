@@ -50,13 +50,20 @@ export const searchRecipes = async (
       .exec();
     const count = await Recipe.find(filter).count().exec();
 
+    const imagesUrl = `${req.protocol}://${req.get("host")}/${
+      imagePath.recipesFolder
+    }/`;
+
+    recipes.forEach((recipe) => {
+      recipe.image = `${imagesUrl}${recipe.image}`;
+    });
+
     const [previousPage, nextPage] = getPagination({
       path: `${req.baseUrl}${req.path}`,
       totalItems: count,
       currentPage,
       perPage,
     });
-
     const totalPages = Math.ceil(count / perPage);
 
     res.status(200).json({ previousPage, nextPage, totalPages, recipes });
