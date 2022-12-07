@@ -50,7 +50,8 @@ export const searchRecipes = async (
       .exec();
     const count = await Recipe.find(filter).count().exec();
 
-    const imagesUrl = `${req.protocol}://${req.get("host")}/${
+    const secure = req.hostname === "localhost" ? "" : "s";
+    const imagesUrl = `${req.protocol}${secure}://${req.get("host")}/${
       imagePath.recipesFolder
     }/`;
 
