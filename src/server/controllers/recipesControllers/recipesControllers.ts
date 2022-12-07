@@ -131,7 +131,7 @@ export const deleteRecipe = async (
   const { recipeId } = req.params;
 
   try {
-    const recipeToDelete = await Recipe.findByIdAndDelete(recipeId);
+    const recipeToDelete = await Recipe.findByIdAndDelete(recipeId).exec();
 
     res.status(200).json({
       message: `Recipe "${recipeToDelete.name}" has been deleted successfully`,

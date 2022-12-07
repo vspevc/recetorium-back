@@ -239,7 +239,9 @@ describe("Given a deleteRecipe controller", () => {
       const expectedJson = {
         message: `Recipe "${recipeTomatoSoup.name}" has been deleted successfully`,
       };
-      Recipe.findByIdAndDelete = jest.fn().mockReturnValue(recipeTomatoSoup);
+      Recipe.findByIdAndDelete = jest.fn().mockReturnValue({
+        exec: jest.fn().mockReturnValue(recipeTomatoSoup),
+      });
 
       await deleteRecipe(req as Request, res as Response, next);
 
