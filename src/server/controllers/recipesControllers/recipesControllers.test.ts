@@ -5,7 +5,11 @@ import {
   recipeTomatoSoup,
 } from "../../../factories/recipeFactory/recipeFactory";
 import { paginationDefaults } from "../../../utils/pagination/getPagination";
-import { createRecipe, searchRecipes } from "./recipesControllers";
+import {
+  createRecipe,
+  deleteRecipe,
+  searchRecipes,
+} from "./recipesControllers";
 import type {
   CreateRecipeBody,
   RecipeStructure,
@@ -217,6 +221,42 @@ describe("Given a createRecipe controller", () => {
       await createRecipe(req as Request, res as Response, next);
 
       expect(next).toHaveBeenCalled();
+    });
+  });
+});
+
+describe("Given a deleteRecipe controller", () => {
+  const id = "1234";
+  const req: Partial<Request> = {
+    params: {
+      recipeId: id,
+    },
+  };
+
+  describe("When it receives a request with recipe id '1234'", () => {
+    test("Then it should call findByIdAndDelete with id '1234'and response status 200 and json with tomato soup", async () => {
+      const expectedStatus = 200;
+      const expectedJson = { deletedRecipe: recipeTomatoSoup };
+      Recipe.findByIdAndDelete = jest.fn().mockReturnValue(recipeTomatoSoup);
+
+      await deleteRecipe(req as Request, res as Response, next);
+
+      expect(Recipe.findByIdAndDelete).toHaveBeenCalledWith(id);
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+      expect(res.json).toHaveBeenCalledWith(expectedJson);
+    });
+  });
+
+  describe("When it receives a request with recipe id '1234' but there's a database error", () => {
+    test("Then it should call next function with an database error", async () => {
+      const expectedError = new Error("Database error");
+      Recipe.findByIdAndDelete = jest.fn().mockImplementation(() => {
+        throw expectedError;
+      });
+
+      await deleteRecipe(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(expectedError);
     });
   });
 });

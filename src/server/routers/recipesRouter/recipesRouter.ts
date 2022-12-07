@@ -6,6 +6,7 @@ import imagePath from "../../../utils/images/imagePath.js";
 import imageValidation from "../../../utils/images/imageValidation.js";
 import {
   createRecipe,
+  deleteRecipe,
   searchRecipes,
 } from "../../controllers/recipesControllers/recipesControllers.js";
 import imageBackup from "../../middleware/images/imageBackup/imageBackup.js";
@@ -37,5 +38,7 @@ recipesRouter.post(
   imageBackup,
   createRecipe
 );
+
+recipesRouter.delete("/delete/:recipeId", deleteRecipe);
 
 export default recipesRouter;
