@@ -47,6 +47,7 @@ export const searchRecipes = async (
     const recipes = await Recipe.find(filter)
       .skip(firstItem)
       .limit(perPage)
+      .sort({ createdAt: -1 })
       .exec();
     const count = await Recipe.find(filter).count().exec();
 
