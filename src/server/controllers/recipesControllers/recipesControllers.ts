@@ -122,3 +122,21 @@ export const createRecipe = async (
     next(error as Error);
   }
 };
+
+export const deleteRecipe = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { recipeId } = req.params;
+
+  try {
+    const recipeToDelete = await Recipe.findByIdAndDelete(recipeId).exec();
+
+    res.status(200).json({
+      message: `Recipe "${recipeToDelete.name}" has been deleted successfully`,
+    });
+  } catch (error: unknown) {
+    next(error);
+  }
+};
