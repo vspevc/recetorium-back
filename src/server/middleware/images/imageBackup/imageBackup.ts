@@ -27,7 +27,7 @@ const imageBackup = async (
   try {
     const imageBuffer = await fs.readFile(image);
 
-    await bucket.upload(filename, imageBuffer);
+    await bucket.upload(filename, imageBuffer, { cacheControl: "604800" });
 
     const {
       data: { publicUrl },
