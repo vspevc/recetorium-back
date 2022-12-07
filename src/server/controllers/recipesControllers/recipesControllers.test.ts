@@ -38,6 +38,7 @@ describe("Given a searchRecipes controller", () => {
   > = {
     body: {},
     query: {},
+    hostname: "localhost",
     baseUrl: "/recipes",
     path: "/search",
     protocol: "http",
@@ -91,6 +92,7 @@ describe("Given a searchRecipes controller", () => {
 
   describe("When it receives body name 'Tomato soup' and types names 'comida' and 'cena'", () => {
     test("Then it should call response methods status with 200 and json with only recipeTomatoSoup", async () => {
+      req.hostname = "notlocal";
       req.body.name = "comida";
       req.body.types = [{ name: "comida" }, { name: "cena" }];
       const expectedRecipe = [recipeTomatoSoup];
