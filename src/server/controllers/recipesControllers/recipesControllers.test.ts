@@ -55,7 +55,9 @@ describe("Given a searchRecipes controller", () => {
       Recipe.find = jest.fn().mockReturnValue({
         skip: jest.fn().mockReturnValue({
           limit: jest.fn().mockReturnValue({
-            exec: jest.fn().mockReturnValue(randomRecipes),
+            sort: jest.fn().mockReturnValue({
+              exec: jest.fn().mockReturnValue(randomRecipes),
+            }),
           }),
         }),
         count: jest.fn().mockReturnValue({
@@ -99,7 +101,9 @@ describe("Given a searchRecipes controller", () => {
       Recipe.find = jest.fn().mockReturnValue({
         skip: jest.fn().mockReturnValue({
           limit: jest.fn().mockReturnValue({
-            exec: jest.fn().mockReturnValue(expectedRecipe),
+            sort: jest.fn().mockReturnValue({
+              exec: jest.fn().mockReturnValue(expectedRecipe),
+            }),
           }),
         }),
         count: jest.fn().mockReturnValue({
