@@ -236,7 +236,9 @@ describe("Given a deleteRecipe controller", () => {
   describe("When it receives a request with recipe id '1234'", () => {
     test("Then it should call findByIdAndDelete with id '1234'and response status 200 and json with tomato soup", async () => {
       const expectedStatus = 200;
-      const expectedJson = { deletedRecipe: recipeTomatoSoup };
+      const expectedJson = {
+        message: `Recipe "${recipeTomatoSoup.name}" has been deleted successfully`,
+      };
       Recipe.findByIdAndDelete = jest.fn().mockReturnValue(recipeTomatoSoup);
 
       await deleteRecipe(req as Request, res as Response, next);

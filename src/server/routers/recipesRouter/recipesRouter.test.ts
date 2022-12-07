@@ -182,3 +182,26 @@ describe("Given the endpoint POST /recipes/create", () => {
     });
   });
 });
+
+describe("Given the endpoint DELETE /recipes/delete/:recipeId", () => {
+  describe("When it receives a request with a recipe id", () => {
+    test("Then it should delete the recipe from the database", async () => {
+      const dbTomatoSoup = await Recipe.create(recipeTomatoSoup);
+      const recipeId = dbTomatoSoup._id.toString();
+      const deletePath = `/recipes/delete/${recipeId}`;
+      const expectedStatus = 200;
+      const expectedBody = {
+        message: `Recipe "${dbTomatoSoup.name}" has been deleted successfully`,
+      };
+
+      const response = await request(app)
+        .delete(deletePath)
+        .expect(expectedStatus);
+
+      const expectedNull = await Recipe.findById(recipeId);
+
+      expect(expectedNull).toBeNull();
+      expect(response.body).toStrictEqual(expectedBody);
+    });
+  });
+});
